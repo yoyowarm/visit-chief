@@ -27,9 +27,9 @@ export default {
   },
   methods: {
     initMap() {
+      console.log(process)
       this.map.data.loadGeoJson(`${this.publicPath}api_revised.json`)
       this.map.data.setStyle( feature => {
-        console.log(feature.j.TOWN)
         const TOWN = String(feature.j.TOWN)
         if (this.towns.find(town => town === TOWN)) {
           if (TOWN === '岡山區') {
