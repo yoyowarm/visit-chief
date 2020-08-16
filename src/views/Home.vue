@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :style="position" ref="info-box" id="info-box">?</div>
+    <div v-show="isMap" :style="position" ref="info-box" id="info-box">?</div>
     <div ref="map" id="map">
   </div>
   </div>
@@ -39,6 +39,9 @@ export default {
       await this.initMap()
   window.document.body.addEventListener('mousemove', this.infoBoxPosition)
   },
+  destroyed () {
+    window.document.body.removeEventListener('mousemove', this.infoBoxPosition)
+  },
   methods: {
     infoBoxPosition(e) {
       if (this.isMap) {
@@ -56,6 +59,7 @@ export default {
             case '岡山區':
               this.position['border-color'] = '#8F1818'
               this.position['background-color'] = '#F45151'
+              this.position['color'] = '#fff'
               return {
               strokeWeight: 1,
               strokeOpacity: .5,
@@ -66,6 +70,7 @@ export default {
             case '路竹區':
               this.position['border-color'] = '#173E08'
               this.position['background-color'] = '#3C8B1C'
+              this.position['color'] = '#fff'
               return {
                 strokeWeight: 1,
                 strokeOpacity: .5,
@@ -76,6 +81,7 @@ export default {
             case '茄萣區':
               this.position['border-color'] = '#064545'
               this.position['background-color'] = '#08C3C3'
+              this.position['color'] = '#fff'
               return {
                 strokeWeight: 1,
                 strokeOpacity: .5,
@@ -86,6 +92,7 @@ export default {
             case '湖內區':
               this.position['border-color'] = '#f00'
               this.position['background-color'] = '#F451F4'
+              this.position['color'] = '#fff'
               return {
                 strokeWeight: 1,
                 strokeOpacity: .5,
@@ -96,6 +103,7 @@ export default {
             case '永安區':
               this.position['border-color'] = '#5177F4'
               this.position['background-color'] = '#5177F4'
+              this.position['color'] = '#fff'
               return {
                 strokeWeight: 1,
                 strokeOpacity: .5,
@@ -106,6 +114,7 @@ export default {
             case '南區':
               this.position['border-color'] = '#7D440C'
               this.position['background-color'] = '#F4A351'
+              this.position['color'] = '#fff'
               return {
                 strokeWeight: 1,
                 strokeOpacity: .5,
@@ -117,6 +126,7 @@ export default {
           } else {
               this.position['border-color'] = '#000'
               this.position['background-color'] = '#fff'
+              this.position['color'] = '#000'
             return {
               strokeWeight: 2,
               strokeOpacity: .5,
@@ -131,9 +141,11 @@ export default {
         this.isMap = true
         this.map.data.revertStyle()
         this.map.data.overrideStyle(event.feature, { strokeWeight: 8 });
-        infoBox.textContent = event.feature.getProperty(
-          "TV_ALL"
-        );
+        if (event.feature.getProperty("TV_ALL")) {
+          infoBox.textContent = event.feature.getProperty("TV_ALL")
+        } else {
+          infoBox.textContent = event.feature.getProperty("Name")
+        }
       });
       await this.map.data.addListener("mouseout", () => {
         this.map.data.revertStyle();
