@@ -178,11 +178,11 @@ export default {
             }
           } else {
             if (feature.j.Name) {
-              this.position['border-color'] = '#000'
-              this.position['background-color'] = '#fff'
-              this.position['color'] = '#000'
               switch (feature.j.Name) {
                 case '岡山會眾區域': 
+                  this.position['border-color'] = '#C14242'
+                  this.position['background-color'] = '#fff'
+                  this.position['color'] = '#C14242'
                   return {
                   strokeWeight: 2,
                   strokeOpacity: index ? 1 : 0.3,
@@ -192,6 +192,9 @@ export default {
                   zIndex: index ? 5 : 0
                 }
                 case '路竹閩南語會眾區域': 
+                  this.position['border-color'] = '#3F59BF'
+                  this.position['background-color'] = '#fff'
+                  this.position['color'] = '#3F59BF'
                   return {
                   strokeWeight: 2,
                   strokeOpacity: index ? 1 : 0.3,
@@ -201,6 +204,9 @@ export default {
                   zIndex: index ? 5 : 0
                 }
                 case '路竹會眾區域': 
+                  this.position['border-color'] = '#20790A'
+                  this.position['background-color'] = '#fff'
+                  this.position['color'] = '#20790A'
                   return {
                   strokeWeight: 2,
                   strokeOpacity: index ? 1 : 0.3,
