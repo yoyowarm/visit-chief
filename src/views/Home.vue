@@ -184,11 +184,11 @@ export default {
                   this.position['background-color'] = '#fff'
                   this.position['color'] = '#C14242'
                   return {
-                  strokeWeight: 2,
+                  strokeWeight: 5,
                   strokeOpacity: index ? 1 : 0.3,
                   fillOpacity: .35,
                   strokeColor: index ? 'red' : '#000',
-                  fillColor: index ? 'red' : '#000',
+                  fillColor: index ? 'red' : '#fff',
                   zIndex: index ? 5 : 0
                 }
                 case '路竹閩南語會眾區域': 
@@ -196,11 +196,11 @@ export default {
                   this.position['background-color'] = '#fff'
                   this.position['color'] = '#3F59BF'
                   return {
-                  strokeWeight: 2,
+                  strokeWeight: 5,
                   strokeOpacity: index ? 1 : 0.3,
                   fillOpacity: .35,
                   strokeColor: index ? 'blue' : '#000',
-                  fillColor: index ? 'blue' : '#000',
+                  fillColor: index ? 'blue' : '#fff',
                   zIndex: index ? 5 : 0
                 }
                 case '路竹會眾區域': 
@@ -208,11 +208,11 @@ export default {
                   this.position['background-color'] = '#fff'
                   this.position['color'] = '#20790A'
                   return {
-                  strokeWeight: 2,
+                  strokeWeight: 5,
                   strokeOpacity: index ? 1 : 0.3,
                   fillOpacity: .35,
                   strokeColor: index ? 'green' : '#000',
-                  fillColor: index ? 'green' : '#000',
+                  fillColor: index ? 'green' : '#fff',
                   zIndex: index ? 5 : 0
                 }
               }
