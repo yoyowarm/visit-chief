@@ -1,5 +1,12 @@
 <template>
   <div>
+    <div class="option">
+      <input type="radio" id="true" :value="true" v-model="layerChecked">
+      <label for="true">會眾圖層優先</label>
+      <br>
+      <input type="radio" id="false" :value="false" v-model="layerChecked">
+      <label for="false">鄉里圖層優先</label>
+    </div>
     <div v-show="isMap" :style="position" ref="info-box" id="info-box">?</div>
     <div ref="map" id="map">
   </div>
@@ -16,6 +23,7 @@ export default {
     return {
       map: null,
       isMap: false,
+      checked: false,
       infoBoxColor: {
 
       },
@@ -26,7 +34,18 @@ export default {
         'background-color': ''
       },
       publicPath: process.env.BASE_URL,
-      towns: ['岡山區', '路竹區', '湖內區', '茄萣區', '南區', '永安區']
+      towns: ['岡山區', '路竹區', '湖內區', '茄萣區', '南區', '永安區', '阿蓮區']
+    }
+  },
+  computed: {
+    layerChecked: {
+      get() {
+        return this.checked
+      },
+      set(val) {
+        this.checked = Boolean(val)
+        this.setStyle(Boolean(val))
+      }
     }
   },
   async mounted() {
@@ -36,8 +55,9 @@ export default {
         zoom: 14,
         center: { lat: 22.879346, lng: 120.248056 }
       });
-      await this.initMap()
-  window.document.body.addEventListener('mousemove', this.infoBoxPosition)
+    await this.initMap()
+    await this.setInfoBox()
+    window.document.body.addEventListener('mousemove', this.infoBoxPosition)
   },
   destroyed () {
     window.document.body.removeEventListener('mousemove', this.infoBoxPosition)
@@ -49,9 +69,31 @@ export default {
         this.position.left = `${e.offsetX +20}px`
       }
     },
-    async initMap() {
+    async setInfoBox() {
+      const infoBox = this.$refs['info-box']
+      await this.map.data.addListener("mouseover", event => {
+        this.isMap = true
+        this.map.data.revertStyle()
+        this.map.data.overrideStyle(event.feature, { strokeWeight: 8 });
+        if (event.feature.getProperty("TV_ALL")) {
+          infoBox.textContent = event.feature.getProperty("TV_ALL")
+        } else {
+          infoBox.textContent = event.feature.getProperty("Name")
+        }
+      });
+      await this.map.data.addListener("mouseout", () => {
+        this.map.data.revertStyle();
+        this.isMap = false
+      });
+    },
+    async initMap () {
       await this.map.data.loadGeoJson(`${this.publicPath}api_revised.json`)
       await this.map.data.loadGeoJson(`${this.publicPath}luzhu.json`)
+      await this.map.data.loadGeoJson(`${this.publicPath}luzhu_min.json`)
+      await this.map.data.loadGeoJson(`${this.publicPath}gangshan.json`)
+      await this.setStyle(false)
+    },
+    async setStyle(index) {
       this.map.data.setStyle( feature => {
         const TOWN = String(feature.j.TOWN)
         if (this.towns.find(town => town === TOWN)) {
@@ -122,45 +164,56 @@ export default {
                 fillColor: '#F4A351',
                 fillOpacity: .35
               }
+            case '阿蓮區':
+              this.position['border-color'] = '#909710'
+              this.position['background-color'] = '#C0C605'
+              this.position['color'] = '#fff'
+              return {
+                strokeWeight: 1,
+                strokeOpacity: .5,
+                strokeColor: '#909710',
+                fillColor: '#C0C605',
+                fillOpacity: .35
+              }
             }
           } else {
+            if (feature.j.Name) {
               this.position['border-color'] = '#000'
               this.position['background-color'] = '#fff'
               this.position['color'] = '#000'
-            return {
-              strokeWeight: 2,
-              strokeOpacity: .5,
-              // strokeColor: '#f00',
-              // fillColor: '#F4A351',
-              fillOpacity: .35
+              switch (feature.j.Name) {
+                case '岡山會眾區域': 
+                  return {
+                  strokeWeight: 2,
+                  strokeOpacity: index ? 1 : 0.3,
+                  fillOpacity: .35,
+                  strokeColor: index ? 'red' : '#000',
+                  fillColor: index ? 'red' : '#000',
+                  zIndex: index ? 5 : 0
+                }
+                case '路竹閩南語會眾區域': 
+                  return {
+                  strokeWeight: 2,
+                  strokeOpacity: index ? 1 : 0.3,
+                  fillOpacity: .35,
+                  strokeColor: index ? 'blue' : '#000',
+                  fillColor: index ? 'blue' : '#000',
+                  zIndex: index ? 5 : 0
+                }
+                case '路竹會眾區域': 
+                  return {
+                  strokeWeight: 2,
+                  strokeOpacity: index ? 1 : 0.3,
+                  fillOpacity: .35,
+                  strokeColor: index ? 'green' : '#000',
+                  fillColor: index ? 'green' : '#000',
+                  zIndex: index ? 5 : 0
+                }
+              }
             }
+              
           }
       })
-      const infoBox = this.$refs['info-box']
-      await this.map.data.addListener("mouseover", event => {
-        this.isMap = true
-        this.map.data.revertStyle()
-        this.map.data.overrideStyle(event.feature, { strokeWeight: 8 });
-        if (event.feature.getProperty("TV_ALL")) {
-          infoBox.textContent = event.feature.getProperty("TV_ALL")
-        } else {
-          infoBox.textContent = event.feature.getProperty("Name")
-        }
-      });
-      await this.map.data.addListener("mouseout", () => {
-        this.map.data.revertStyle();
-        this.isMap = false
-      });
-      // var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      // var locations = [
-      //     { lat: 22.879346, lng: 120.248056 }
-      // ]
-      // var markers = locations.map(function(location, i) {
-      //     return new google.maps.Marker({
-      //         position: location,
-      //         label: 'dfff'
-      //     });
-      // })
     }
   }
 }
@@ -168,7 +221,7 @@ export default {
 
 <style lang="scss">
   #map {
-    height:800px;
+    height: calc(100vh - 100px);
     width: 100%;
   }
   #info-box {
@@ -184,4 +237,8 @@ export default {
     left: 30px;
     z-index: 999;
   }
+.option {
+  height: 82px;
+  width: 100%;
+}
 </style>
