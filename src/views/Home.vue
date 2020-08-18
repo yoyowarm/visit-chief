@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="option">
+      <twzipcode @getMap="assignMap"/>
       <input type="radio" id="true" :value="true" v-model="layerChecked">
       <label for="true">會眾圖層優先</label>
       <br>
@@ -8,17 +9,20 @@
       <label for="false">鄉里圖層優先</label>
     </div>
     <div v-show="isMap" :style="position" ref="info-box" id="info-box">?</div>
-    <div ref="map" id="map">
-  </div>
+    <div ref="map" id="map"></div>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import {Loader} from 'google-maps'
+import twzipcode from '../components/twzipcode'
 // const api_revised = require('../utils/api_revised.json')
 export default {
   name: 'Home',
+  components: {
+    twzipcode
+  },
   data() {
     return {
       map: null,
@@ -46,6 +50,9 @@ export default {
         this.checked = Boolean(val)
         this.setStyle(Boolean(val))
       }
+    },
+    geoJson() {
+      return this.$store.state.map.data
     }
   },
   async mounted() {
@@ -91,6 +98,10 @@ export default {
       await this.map.data.loadGeoJson(`${this.publicPath}luzhu.json`)
       await this.map.data.loadGeoJson(`${this.publicPath}luzhu_min.json`)
       await this.map.data.loadGeoJson(`${this.publicPath}gangshan.json`)
+      await this.setStyle(false)
+    },
+    async assignMap () {
+      await this.map.data.addGeoJson(JSON.parse(JSON.stringify(this.geoJson)))
       await this.setStyle(false)
     },
     async setStyle(index) {
