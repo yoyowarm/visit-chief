@@ -3,7 +3,7 @@ name: deploy gh-pages
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
@@ -29,7 +29,6 @@ jobs:
           git init
           git config --local user.email $USER_NAME
           git config --local user.name $USER_EMAIL
-          git config --global init.defaultBranch main
           git status
           git remote add origin https://$MY_SECRET@github.com/$GITHUB_REPOSITORY.git
           git checkout -b gh-pages
